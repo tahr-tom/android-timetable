@@ -1,6 +1,7 @@
 package com.example.thomas.timetable;
 
 import android.app.*;
+import android.content.Intent;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,11 +12,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import org.joda.time.Interval;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +29,7 @@ import java.util.List;
 public class EditorActivity extends AppCompatActivity {
 
     private Timetable mTimetable;
+    private EditText activityTitle;
     private Spinner prioritySpinner;
     private Spinner durationHoursSpinner;
     private Spinner durationMinutesSpinner;
@@ -47,6 +52,8 @@ public class EditorActivity extends AppCompatActivity {
 
         // fetch the timetable from main activity
         mTimetable = getIntent().getParcelableExtra("timetable");
+
+        activityTitle = (EditText) findViewById(R.id.activity_title);
 
         // fetch all activities from main activity
         prerequisitesList = mTimetable.getUnsortedActivities();
@@ -266,12 +273,36 @@ public class EditorActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_save:
                 saveActivity();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     private void saveActivity() {
         //TODO finish this method
+
+        // get title from edit text
+        String title = activityTitle.getText().toString();
+        //
+        int priority = Integer.valueOf((String) prioritySpinner.getItemAtPosition(prioritySpinner.getSelectedItemPosition()));
+        int durationHours = Integer.valueOf((String) durationHoursSpinner.getItemAtPosition(durationHoursSpinner.getSelectedItemPosition()));
+        int durationMinutes = Integer.valueOf((String) durationMinutesSpinner.getItemAtPosition(durationMinutesSpinner.getSelectedItemPosition()));
+        if (title.isEmpty()) {
+            Toast.makeText(this, "You didn't enter a title!", Toast.LENGTH_SHORT).show();
+        } else if (availablePeriod.isEmpty()) {
+            Toast.makeText(this, "You didn't enter any available period!", Toast.LENGTH_SHORT).show();
+        } else {
+            if (prerequisiteSpinner.getSelectedItem() == null) {
+                prerequisitesForCurrentActivity.add(0);
+            }
+            Activity activity = new Activity(title, priority,
+                    durationHours, durationMinutes, availablePeriod, prerequisitesForCurrentActivity);
+            mTimetable.addActivity(activity);
+            Toast.makeText(this, "Activity added", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(EditorActivity.this, MainActivity.class);
+            intent.putExtra("timetable", mTimetable);
+            startActivity(intent);
+        }
     }
 
     private String formatTime(int hour, int minute) {

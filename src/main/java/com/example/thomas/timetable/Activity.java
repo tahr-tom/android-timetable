@@ -44,6 +44,27 @@ public class Activity implements Parcelable {
         nextActivityNumber++; // Increment next activity id by 1
     }
 
+    Activity(String activityTitle, Integer priority,
+             int durationHours, int durationMinutes,
+             ArrayList<Interval> periods, ArrayList<Integer> prerequisites) {
+        mActivityNumber = nextActivityNumber;
+        mActivityTitle = activityTitle;
+        mPriority = priority;
+        mDuration = new Period(durationHours, durationMinutes, 0 ,0);
+        mAvailablePeriod = new ArrayList<>();
+        for (Interval interval: periods) {
+            mAvailablePeriod.add(interval);
+        }
+        mPrerequisite = new ArrayList<>();
+        for (Integer integer: prerequisites) {
+            if (!integer.equals(0)) {
+                mPrerequisite.add(integer);
+            }
+        }
+        mFinalPeriod = null;
+        nextActivityNumber++;
+    }
+
     Interval getFinalPeriod() {
         return mFinalPeriod;
     }
@@ -53,9 +74,6 @@ public class Activity implements Parcelable {
         mAvailablePeriod.add(new Interval(start, end));
     }
 
-    void addPeriod(Interval period) {
-        mAvailablePeriod.add(period);
-    }
 
     void addPrerequisite(int prerequisite) {
         mPrerequisite.add(prerequisite);
