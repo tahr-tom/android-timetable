@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.support.design.widget.TabLayout;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -78,6 +79,13 @@ public class MainActivity extends AppCompatActivity {
 
         //TODO: finish this
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+
+        WeekdayAdapter adapter = new WeekdayAdapter(this, getSupportFragmentManager());
+
+        viewPager.setAdapter(adapter);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
 
         Log.d("Numbers of activities", String.valueOf(mTimetable.getUnsortedActivities().size()));
 
