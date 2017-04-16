@@ -1,6 +1,11 @@
 package com.example.thomas.timetable;
 
 import android.content.Intent;
+import android.os.Parcelable;
+import android.support.annotation.IdRes;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,7 +14,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.design.widget.TabLayout;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     Timetable mTimetable = new Timetable();
@@ -77,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //TODO: finish this
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
 
         WeekdayAdapter adapter = new WeekdayAdapter(this, getSupportFragmentManager());
@@ -102,7 +113,22 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.schedule_activities:
                 //TODO: add functionality to schedule btn
-                break;
+                if (mTimetable.getUnsortedActivities().size() == 0) {
+                    Toast.makeText(this, "You have to add at least one activity!", Toast.LENGTH_SHORT).show();
+                } else {
+                    ArrayList<Activity> setActivities = mTimetable.getSetActivities();
+                    int viewPagerId = R.id.viewpager;
+                    String[] weekdaysFragmentTags = new String[]{
+                            getFragmentByViewPagerIndex(viewPagerId, 0),
+                            getFragmentByViewPagerIndex(viewPagerId, 1),
+                            getFragmentByViewPagerIndex(viewPagerId, 2),
+                            getFragmentByViewPagerIndex(viewPagerId, 3),
+                            getFragmentByViewPagerIndex(viewPagerId, 4),
+                            getFragmentByViewPagerIndex(viewPagerId, 5),
+                            getFragmentByViewPagerIndex(viewPagerId, 6)
+                    };
+                }
+                return true;
             case R.id.add_activity:
 //                Toast.makeText(this, "Add activity btn clicked", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, EditorActivity.class);
@@ -119,5 +145,9 @@ public class MainActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private String getFragmentByViewPagerIndex(int viewPagerID, int index) {
+        return "android:switcher:" + viewPagerID + ":" + index;
     }
 }

@@ -39,6 +39,7 @@ public class EditorActivity extends AppCompatActivity {
     private TimePickerDialog mEndTimePickerDialog;
     private Button addPrerequisiteButton;
     private Button addAvailablePeriodButton;
+    private TextView currentActivityNumber;
 
     private ArrayList<Activity> prerequisitesList;
     private ArrayList<CharSequence> prerequisitesTitles;
@@ -52,6 +53,9 @@ public class EditorActivity extends AppCompatActivity {
 
         // fetch the timetable from main activity
         mTimetable = getIntent().getParcelableExtra("timetable");
+
+        currentActivityNumber = (TextView) findViewById(R.id.activity_index);
+        currentActivityNumber.setText("This is your " + getOrdinalForm(mTimetable.getUnsortedActivities().size() + 1) + " activity");
 
         activityTitle = (EditText) findViewById(R.id.activity_title);
 
@@ -215,6 +219,29 @@ public class EditorActivity extends AppCompatActivity {
 
 
     }
+
+    private String getOrdinalForm(int number) {
+        String[] suffix = new String[] {
+                "st", "nd", "rd", "th"
+        };
+        switch (number % 100) {
+            case 11:
+            case 12:
+            case 13:
+                return String.valueOf(number) + suffix[3];
+        }
+        switch (number % 10) {
+            case 1:
+                return String.valueOf(number) + suffix[0];
+            case 2:
+                return String.valueOf(number) + suffix[1];
+            case 3:
+                return String.valueOf(number) + suffix[2];
+            default:
+                return String.valueOf(number) + suffix[3];
+        }
+    }
+
 
     private ArrayList<CharSequence> getPrerequisitesTitles() {
         ArrayList<CharSequence> prerequisitesTitles = new ArrayList<>();

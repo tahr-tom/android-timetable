@@ -24,9 +24,9 @@ public class ThursdayFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.no_activity, container, false);
         if (savedInstanceState != null) {
             rootView = inflater.inflate(R.layout.activity_list, container, false);
-            ArrayList<Activity> sortedActivities = savedInstanceState.getParcelable("sorted");
+            ArrayList<Activity> setActivities = savedInstanceState.getParcelable("sorted");
             ArrayList<Activity> thursdayActivities = new ArrayList<>();
-            for(Activity activity: sortedActivities) {
+            for(Activity activity: setActivities) {
                 if (activity.getFinalPeriod().getStart().getDayOfWeek() == DateHelper.THURSDAY_WEEKDAY) {
                     thursdayActivities.add(activity);
                 }

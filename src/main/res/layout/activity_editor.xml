@@ -21,6 +21,14 @@
         android:padding="16dp">
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/activity_index"
+            tools:text="This is your 1st activity"
+            android:layout_gravity="center"
+            android:textSize="16sp"/>
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Info:"

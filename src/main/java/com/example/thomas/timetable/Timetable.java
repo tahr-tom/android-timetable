@@ -12,7 +12,9 @@ import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 
 class Timetable implements Parcelable {
@@ -97,39 +99,6 @@ class Timetable implements Parcelable {
         unsortedActivities.add(activity);
     }
 
-    // Implement quick sort since Comparator is not supported
-    private void quickSortActivity(ArrayList<Activity> activities, int left, int right) {
-        if (activities.isEmpty()) {
-            return;
-        }
-        int center = left + (right - left) / 2;
-        int pivot = activities.get(center).getPriority();
-
-        int i = left;
-        int j = right;
-        while (i <= j) {
-            while (activities.get(i).getPriority() < pivot) {
-                i++;
-            }
-            while (activities.get(j).getPriority() > pivot) {
-                j--;
-            }
-            if (i <= j) {
-                Activity temp = activities.get(i);
-                activities.set(i, activities.get(j));
-                activities.set(j, temp);
-                i++;
-                j--;
-            }
-        }
-        if (left < j) {
-            quickSortActivity(activities, left, j);
-        }
-        if (i < right) {
-            quickSortActivity(activities, i, right);
-        }
-    }
-
     ArrayList<Activity> getUnsortedActivities() {
         return unsortedActivities;
     }
@@ -151,11 +120,13 @@ class Timetable implements Parcelable {
 
         // Sort activities by priority
 
-        // Comparator approach (not supported, use quick sort instead)
-        //tempArrayList.sort(new ActivityComparator());
-
-        // Quick sort temp by priority (ascending)
-        quickSortActivity(tempArrayList, 0, tempArrayList.size() - 1);
+        // Sort temp with comparator (ascending)
+        Collections.sort(tempArrayList, new Comparator<Activity>() {
+            @Override
+            public int compare(Activity o1, Activity o2) {
+                return o1.getPriority().compareTo(o2.getPriority());
+            }
+        });
 
         // Reverse the order of activities (ascending --> descending)
         Collections.reverse(tempArrayList);
