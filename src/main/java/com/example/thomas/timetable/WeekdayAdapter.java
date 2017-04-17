@@ -5,33 +5,41 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import java.util.ArrayList;
+
 
 public class WeekdayAdapter extends FragmentPagerAdapter {
-
     private Context mContext;
+
+    private ArrayList<Fragment> mFragments = new ArrayList<>();
 
     public WeekdayAdapter(Context context, FragmentManager fm) {
         super(fm);
         mContext = context;
+
+    }
+
+    public void add(Fragment fragment) {
+        mFragments.add(fragment);
     }
 
     @Override
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new SundayFragment();
+                return mFragments.get(0);
             case 1:
-                return new MondayFragment();
+                return mFragments.get(1);
             case 2:
-                return new TuesdayFragment();
+                return mFragments.get(2);
             case 3:
-                return new WednesdayFragment();
+                return mFragments.get(3);
             case 4:
-                return new ThursdayFragment();
+                return mFragments.get(4);
             case 5:
-                return new FridayFragment();
+                return mFragments.get(5);
             case 6:
-                return new SaturdayFragment();
+                return mFragments.get(6);
             default:
                 return null;
         }
@@ -64,3 +72,5 @@ public class WeekdayAdapter extends FragmentPagerAdapter {
         }
     }
 }
+
+

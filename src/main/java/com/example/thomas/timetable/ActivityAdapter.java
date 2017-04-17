@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class ActivityAdapter extends ArrayAdapter<Activity> {
+class ActivityAdapter extends ArrayAdapter<Activity> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -37,6 +37,7 @@ public class ActivityAdapter extends ArrayAdapter<Activity> {
 
     }
 
+    // the arraylist passed in should only include that weekday' activities and sort by time (ascending)
     ActivityAdapter(Context context, ArrayList<Activity> sortedActivities) {
         super(context, 0, sortedActivities);
     }
