@@ -362,6 +362,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void importTimetable(String activitiesString) {
+        activitiesString = activitiesString.replace("\n", "").trim();
         int numberOfActivities = Integer.parseInt(activitiesString.trim().substring(0, 1));
         Log.i("number of activities", String.valueOf(numberOfActivities));
         for(int i = 0; i <= numberOfActivities; i++) {
