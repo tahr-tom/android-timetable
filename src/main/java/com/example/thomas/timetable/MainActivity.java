@@ -1,6 +1,8 @@
 package com.example.thomas.timetable;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -12,12 +14,17 @@ import android.view.MenuItem;
 import android.support.design.widget.TabLayout;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int PICKFILE_REQUEST_CODE = 1;
     DefaultAdapter adapter;
     ViewPager viewPager;
     Timetable mTimetable = new Timetable();
@@ -104,93 +111,86 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.schedule_activities:
-                if (mTimetable.getUnsortedActivities().size() == 0) {
-                    // if there is no activity, notice the user
-                    Toast.makeText(this, "You have to add at least one activity!", Toast.LENGTH_SHORT).show();
-                } else {
-                    // get set activities from timetable
-                    ArrayList<Activity> allActivities = mTimetable.getSetActivities();
+    private void updateFragment() {
+        // get set activities from timetable
+        ArrayList<Activity> allActivities = mTimetable.getSetActivities();
 
-                    // remove activities that don't have a final period
-                    for (Iterator<Activity> iterator = allActivities.iterator();
-                         iterator.hasNext(); ) {
-                        Activity activity = iterator.next();
-                        if (activity.getFinalPeriod() == null) {
-                            iterator.remove();
-                        }
-                    }
+        // remove activities that don't have a final period
+        for (Iterator<Activity> iterator = allActivities.iterator();
+             iterator.hasNext(); ) {
+            Activity activity = iterator.next();
+            if (activity.getFinalPeriod() == null) {
+                iterator.remove();
+            }
+        }
 
-                    // sort the remaining activities by time
-                    Collections.sort(allActivities, new Comparator<Activity>() {
-                        @Override
-                        public int compare(Activity o1, Activity o2) {
-                            return o1.getFinalPeriod().getStart().compareTo(o2.getFinalPeriod().getStart());
-                        }
-                    });
+        // sort the remaining activities by time
+        Collections.sort(allActivities, new Comparator<Activity>() {
+            @Override
+            public int compare(Activity o1, Activity o2) {
+                return o1.getFinalPeriod().getStart().compareTo(o2.getFinalPeriod().getStart());
+            }
+        });
 
-                    // list to store all activities
-                    ArrayList<ArrayList<Activity>> weekdayActivities = new ArrayList<>();
+        // list to store all activities
+        ArrayList<ArrayList<Activity>> weekdayActivities = new ArrayList<>();
 
-                    // use 7 arraylist to store each weekday activities
-                    // order: SUN --> MON --> TUE --> WED --> THU --> FRI --> SAT
-                    for (int i = 1; i <= 7; i++) {
-                        ArrayList<Activity> activities = new ArrayList<>();
-                        weekdayActivities.add(activities);
-                    }
+        // use 7 arraylist to store each weekday activities
+        // order: SUN --> MON --> TUE --> WED --> THU --> FRI --> SAT
+        for (int i = 1; i <= 7; i++) {
+            ArrayList<Activity> activities = new ArrayList<>();
+            weekdayActivities.add(activities);
+        }
 
-                    // distribute activities by its weekday
-                    for (Activity activity : allActivities) {
-                        switch (activity.getFinalPeriod().getStart().getDayOfWeek()) {
-                            case DateHelper.SUNDAY_WEEKDAY:
-                                weekdayActivities.get(0).add(activity);
-                                break;
-                            case DateHelper.MONDAY_WEEKDAY:
-                                weekdayActivities.get(1).add(activity);
-                                break;
-                            case DateHelper.TUESDAY_WEEKDAY:
-                                weekdayActivities.get(2).add(activity);
-                                break;
-                            case DateHelper.WEDNESDAY_WEEKDAY:
-                                weekdayActivities.get(3).add(activity);
-                                break;
-                            case DateHelper.THURSDAY_WEEKDAY:
-                                weekdayActivities.get(4).add(activity);
-                                break;
-                            case DateHelper.FRIDAY_WEEKDAY:
-                                weekdayActivities.get(5).add(activity);
-                                break;
-                            case DateHelper.SATURDAY_WEEKDAY:
-                                weekdayActivities.get(6).add(activity);
-                                break;
-                        }
-                    }
+        // distribute activities by its weekday
+        for (Activity activity : allActivities) {
+            switch (activity.getFinalPeriod().getStart().getDayOfWeek()) {
+                case DateHelper.SUNDAY_WEEKDAY:
+                    weekdayActivities.get(0).add(activity);
+                    break;
+                case DateHelper.MONDAY_WEEKDAY:
+                    weekdayActivities.get(1).add(activity);
+                    break;
+                case DateHelper.TUESDAY_WEEKDAY:
+                    weekdayActivities.get(2).add(activity);
+                    break;
+                case DateHelper.WEDNESDAY_WEEKDAY:
+                    weekdayActivities.get(3).add(activity);
+                    break;
+                case DateHelper.THURSDAY_WEEKDAY:
+                    weekdayActivities.get(4).add(activity);
+                    break;
+                case DateHelper.FRIDAY_WEEKDAY:
+                    weekdayActivities.get(5).add(activity);
+                    break;
+                case DateHelper.SATURDAY_WEEKDAY:
+                    weekdayActivities.get(6).add(activity);
+                    break;
+            }
+        }
 
 //                    Log.i("Sort btn", String.valueOf(mTimetable.getUnsortedActivities().size()));
 //                    Log.i("Sort btn", "Monday" + String.valueOf(mondayActivities.size()));
-                    // using new adapter to update views
-                    WeekdayAdapter adapter = new WeekdayAdapter(this, getSupportFragmentManager());
+        // using new adapter to update views
+        WeekdayAdapter adapter = new WeekdayAdapter(this, getSupportFragmentManager());
 
-                    // for ever weekday
-                    for (ArrayList<Activity> arrayList : weekdayActivities) {
-                        if (!arrayList.isEmpty()) { // if that day has activities
-                            // create new weekday fragment and supply activities for that day
-                            Fragment fragment = new WeekdayFragment();
-                            Bundle bundle = new Bundle();
-                            bundle.putParcelableArrayList("activities", arrayList);
-                            fragment.setArguments(bundle);
+        // for ever weekday
+        for (ArrayList<Activity> arrayList : weekdayActivities) {
+            if (!arrayList.isEmpty()) { // if that day has activities
+                // create new weekday fragment and supply activities for that day
+                Fragment fragment = new WeekdayFragment();
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("activities", arrayList);
+                fragment.setArguments(bundle);
 
-                            // add that weekday fragment to the adapter
-                            adapter.add(fragment);
+                // add that weekday fragment to the adapter
+                adapter.add(fragment);
 
-                        } else { // if there is no activity for that day
-                            // add the old empty fragment to the adapter
-                            adapter.add(new DefaultFragment());
-                        }
-                    }
+            } else { // if there is no activity for that day
+                // add the old empty fragment to the adapter
+                adapter.add(new DefaultFragment());
+            }
+        }
 //                    if (!sundayActivities.isEmpty()) {
 //                        Fragment sundayFragment = new WeekdayFragment();
 //                        Bundle bundle = new Bundle();
@@ -255,39 +255,54 @@ public class MainActivity extends AppCompatActivity {
 //                        adapter.add(new DefaultFragment());
 //                    }
 //                    Log.i("Sort bnt", "view pager adapter reset");
-                    // set the new adapter to the view pager
-                    viewPager.setAdapter(adapter);
+        // set the new adapter to the view pager
+        viewPager.setAdapter(adapter);
 
-                    // get the actual number of activities that the program has scheduled
-                    int setActivities = 0;
-                    for (ArrayList<Activity> activities : weekdayActivities) {
-                        setActivities += activities.size();
-                    }
+        // get the actual number of activities that the program has scheduled
+        int setActivities = 0;
+        for (ArrayList<Activity> activities : weekdayActivities) {
+            setActivities += activities.size();
+        }
 
-                    // get the total number of activities that user has input
-                    int totalActivities = mTimetable.getUnsortedActivities().size();
+        // get the total number of activities that user has input
+        int totalActivities = mTimetable.getUnsortedActivities().size();
 
 
-                    if (setActivities == totalActivities) { // if all activities has been scheduled
-                        Toast.makeText(this, "Scheduled all activities", Toast.LENGTH_SHORT).show();
-                    } else { // if only some activities has been scheduled
-                        Toast.makeText(this, "Schedule " + String.valueOf(setActivities)
-                                + " activities out of " + String.valueOf(totalActivities)
-                                + " activities", Toast.LENGTH_SHORT).show();
-                    }
+        if (setActivities == totalActivities) { // if all activities has been scheduled
+            Toast.makeText(this, "Scheduled all activities", Toast.LENGTH_SHORT).show();
+        } else { // if only some activities has been scheduled
+            Toast.makeText(this, "Schedule " + String.valueOf(setActivities)
+                    + " activities out of " + String.valueOf(totalActivities)
+                    + " activities", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.schedule_activities:
+                if (mTimetable.getUnsortedActivities().size() == 0) {
+                    // if there is no activity, notice the user
+                    Toast.makeText(this, "You have to add at least one activity!", Toast.LENGTH_SHORT).show();
+                } else {
+                    updateFragment();
                 }
                 return true;
 
             case R.id.add_activity:
 //                Toast.makeText(this, "Add activity btn clicked", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, EditorActivity.class);
-                intent.putExtra("timetable", mTimetable);
-                startActivity(intent);
+                Intent addIntent = new Intent(MainActivity.this, EditorActivity.class);
+                addIntent.putExtra("timetable", mTimetable);
+                startActivity(addIntent);
                 return true;
 
             case R.id.import_activities:
 //                Toast.makeText(this, "Import activities btn clicked", Toast.LENGTH_SHORT).show();
                 // TODO: add functionality to import btn
+                Intent importIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                importIntent.setType("text/plain");
+                startActivityForResult(importIntent, PICKFILE_REQUEST_CODE);
                 return true;
 
             case R.id.export_timetable:
@@ -295,7 +310,70 @@ public class MainActivity extends AppCompatActivity {
                 // TODO: add functionality to export btn
                 return true;
         }
+
+
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case 1:
+                if (resultCode == RESULT_OK) {
+                    Uri uri = data.getData();
+
+                    try {
+                        String activitiesString = getStringFromUri(uri);
+                        importTimetable(activitiesString);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private boolean isExternalStorageReadable() {
+        String state = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED.equals(state) ||
+                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
+    }
+
+    private boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED.equals(state);
+    }
+
+    // >= Android 4.4 (Kitkat)
+    private String getStringFromUri(Uri uri) throws IOException {
+        InputStream inputStream = getContentResolver().openInputStream(uri);
+        assert inputStream != null;
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        StringBuilder stringBuilder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            stringBuilder.append(line).append('\n');
+        }
+        inputStream.close();
+        Log.i("getStringFromUri_Result", String.valueOf(stringBuilder.toString()));
+        return stringBuilder.toString();
+    }
+
+    private void importTimetable(String activitiesString) {
+        int numberOfActivities = Integer.parseInt(activitiesString.trim().substring(0, 1));
+        Log.i("number of activities", String.valueOf(numberOfActivities));
+        for(int i = 0; i <= numberOfActivities; i++) {
+            activitiesString = activitiesString.substring(activitiesString.indexOf(",") + 1);
+            String title = activitiesString.substring(0, activitiesString.indexOf(","));
+            activitiesString = activitiesString.substring(activitiesString.indexOf(",") + 1);
+            int priority = Integer.parseInt(activitiesString.substring(0, 1));
+            activitiesString = activitiesString.substring(2);
+
+
+
+        }
     }
 
 

@@ -161,6 +161,8 @@ public class EditorActivity extends AppCompatActivity {
                     Toast.makeText(EditorActivity.this, "You didn't select any weekday!", Toast.LENGTH_SHORT).show();
                 } else if (startTimeText.equals("Start")) {
                     Toast.makeText(EditorActivity.this, "You didn't select a start time!", Toast.LENGTH_SHORT).show();
+                } else if (endTimeText.equals("End")) {
+                    Toast.makeText(EditorActivity.this, "You didn't select a end time!", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -181,15 +183,16 @@ public class EditorActivity extends AppCompatActivity {
                     String durationMinuteText = (String) durationMinutesSpinner
                             .getItemAtPosition(durationMinutesSpinner.getSelectedItemPosition());
 
-                    // get endTime array
-                    int[] endTime = getEndTimeByDuration(hourOfDay, minute,
-                            Integer.valueOf(durationHourText),
-                            Integer.valueOf(durationMinuteText));
-                    // add duration to starting time and set up ending time in available period
-                    // actual value (user can't see without click the btn)
-                    mEndTimePickerDialog.updateTime(endTime[0], endTime[1]);
-                    // also set text for btn so they can see it
-                    endTimeButton.setText(formatTime(endTime[0], endTime[1]));
+//                    // get endTime array
+//                    int[] endTime = getEndTimeByDuration(hourOfDay, minute,
+//                            Integer.valueOf(durationHourText),
+//                            Integer.valueOf(durationMinuteText));
+//
+//                    // add duration to starting time and set up ending time in available period
+//                    // actual value (user can't see without click the btn)
+//                    mEndTimePickerDialog.updateTime(endTime[0], endTime[1]);
+//                    // also set text for btn so they can see it
+//                    endTimeButton.setText(formatTime(endTime[0], endTime[1]));
 
                 }
             }
