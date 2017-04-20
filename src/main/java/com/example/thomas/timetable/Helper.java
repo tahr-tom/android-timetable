@@ -3,15 +3,12 @@ package com.example.thomas.timetable;
 import android.util.Log;
 
 import org.joda.time.DateTime;
-import org.joda.time.Instant;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
-import java.util.Arrays;
-
-class DateHelper {
+class Helper {
 
     // Int for different weekdays
     final static int MONDAY_WEEKDAY = 1;
@@ -146,6 +143,41 @@ class DateHelper {
             .appendLiteral(":")
             .appendMinuteOfHour(2)
             .toFormatter();
+
+    static DateTimeFormatter exportFileNameDateTimeFormatter = new DateTimeFormatterBuilder()
+            .appendYear(4, 4)
+            .appendLiteral("-")
+            .appendMonthOfYear(2)
+            .appendLiteral("-")
+            .appendDayOfMonth(2)
+            .appendLiteral("T")
+            .appendHourOfDay(2)
+            .appendLiteral("_")
+            .appendMinuteOfHour(2)
+            .appendLiteral("_")
+            .appendSecondOfMinute(2)
+            .toFormatter();
+
+    static String getWeekDayNameByWeekday(int weekday) {
+        switch (weekday) {
+            case SUNDAY_WEEKDAY:
+                return "Sun";
+            case MONDAY_WEEKDAY:
+                return "Mon";
+            case TUESDAY_WEEKDAY:
+                return "Tue";
+            case WEDNESDAY_WEEKDAY:
+                return "Wed";
+            case THURSDAY_WEEKDAY:
+                return "Thu";
+            case FRIDAY_WEEKDAY:
+                return "Fri";
+            case SATURDAY_WEEKDAY:
+                return "Sat";
+            default:
+                return null;
+        }
+    }
 
 
 }

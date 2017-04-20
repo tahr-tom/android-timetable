@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.Period;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -51,8 +52,8 @@ class Timetable implements Parcelable {
      */
     String availablePeriodFormatter(Interval availablePeriod) {
         return availablePeriod.getStart().toString(shortWeekdayFormatString) + "\n" +
-                availablePeriod.getStart().toString(DateHelper.dateTimeFormatter) + " - " +
-                availablePeriod.getEnd().toString(DateHelper.dateTimeFormatter);
+                availablePeriod.getStart().toString(Helper.dateTimeFormatter) + " - " +
+                availablePeriod.getEnd().toString(Helper.dateTimeFormatter);
     }
 
     /**
@@ -65,7 +66,7 @@ class Timetable implements Parcelable {
         String activityString = String.valueOf(activity.getActivityNumber()) + "\n" +
                 activity.getActivityTitle() + "\n" +
                 String.valueOf("Priority: " + activity.getPriority()) + "\n" +
-                "Duration: " + activity.getDuration().toString(DateHelper.durationFormatter) + "\n" +
+                "Duration: " + activity.getDuration().toString(Helper.durationFormatter) + "\n" +
                 "Available periods\n";
         for (Interval availablePeriod : activity.getAvailablePeriod()) {
             activityString += availablePeriodFormatter(availablePeriod);
@@ -285,7 +286,9 @@ class Timetable implements Parcelable {
 
         // Add all activities that have prerequisite from temp to sorted
         for (Activity activity : tempArrayList) {
-            setActivities.add(activity);
+            if (activity.getFinalPeriod() != null) {
+                setActivities.add(activity);
+            }
         }
 
         return this.setActivities;

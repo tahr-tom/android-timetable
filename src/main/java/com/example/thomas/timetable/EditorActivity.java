@@ -2,7 +2,6 @@ package com.example.thomas.timetable;
 
 import android.app.*;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -19,12 +18,10 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import org.joda.time.Interval;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
 public class EditorActivity extends AppCompatActivity {
 
@@ -143,13 +140,13 @@ public class EditorActivity extends AppCompatActivity {
                 Log.i("ADA", startTimeText + "\n" + endTimeText);
                 Log.i("weekdayname", weekdayName);
                 if (!weekdayName.isEmpty() && !startTimeText.equals("Start") && !endTimeText.equals("End")) {
-                    int weekday = DateHelper.getWeekdayByWeekdayName(weekdayName);
+                    int weekday = Helper.getWeekdayByWeekdayName(weekdayName);
                     Log.i("weekday int", String.valueOf(weekday));
-                    int[] startTime = DateHelper.getHourMinuteByTimeString(startTimeText);
-                    int[] endTime = DateHelper.getHourMinuteByTimeString(endTimeText);
+                    int[] startTime = Helper.getHourMinuteByTimeString(startTimeText);
+                    int[] endTime = Helper.getHourMinuteByTimeString(endTimeText);
                     Log.i("ADA", Arrays.toString(startTime) + "\n" + Arrays.toString(endTime));
-                    Interval period = new Interval(DateHelper.getDate(weekday, startTime[0], startTime[1]),
-                            DateHelper.getDate(weekday, endTime[0], endTime[1]));
+                    Interval period = new Interval(Helper.getDate(weekday, startTime[0], startTime[1]),
+                            Helper.getDate(weekday, endTime[0], endTime[1]));
                     availablePeriod.add(period);
                     Toast.makeText(EditorActivity.this, "Available Period added:\n" + mTimetable.availablePeriodFormatter(period)
                             , Toast.LENGTH_SHORT).show();

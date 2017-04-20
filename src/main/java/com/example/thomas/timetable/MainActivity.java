@@ -1,8 +1,13 @@
 package com.example.thomas.timetable;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -14,22 +19,26 @@ import android.view.MenuItem;
 import android.support.design.widget.TabLayout;
 import android.widget.Toast;
 
+import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PICKFILE_REQUEST_CODE = 1;
-    DefaultAdapter adapter;
-    ViewPager viewPager;
-    Timetable mTimetable = new Timetable();
+    private DefaultAdapter adapter;
+    private ViewPager viewPager;
+    private Timetable mTimetable = new Timetable();
+    private ArrayList<Activity> finalState = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,41 +55,41 @@ public class MainActivity extends AppCompatActivity {
 //            //-----------------------------------Hard coded data for testing-------------------------------------
 //            Activity act1 = new Activity("Borrow a travel book from library", 5,
 //                    1, 0,
-//                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 10, 0),
-//                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 13, 0), Timetable.NO_PREREQUISITE);
-//            act1.addPeriod(DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 14, 0),
-//                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 20, 0));
-//            act1.addPeriod(DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 10, 0),
-//                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 13, 0));
-//            act1.addPeriod(DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 14, 0),
-//                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 20, 0));
+//                    Helper.getDate(Helper.SUNDAY_WEEKDAY, 10, 0),
+//                    Helper.getDate(Helper.SUNDAY_WEEKDAY, 13, 0), Timetable.NO_PREREQUISITE);
+//            act1.addPeriod(Helper.getDate(Helper.SUNDAY_WEEKDAY, 14, 0),
+//                    Helper.getDate(Helper.SUNDAY_WEEKDAY, 20, 0));
+//            act1.addPeriod(Helper.getDate(Helper.MONDAY_WEEKDAY, 10, 0),
+//                    Helper.getDate(Helper.MONDAY_WEEKDAY, 13, 0));
+//            act1.addPeriod(Helper.getDate(Helper.MONDAY_WEEKDAY, 14, 0),
+//                    Helper.getDate(Helper.MONDAY_WEEKDAY, 20, 0));
 //
 //            Activity act2 = new Activity("Haircut for wedding", 2,
 //                    2, 0,
-//                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 10, 0),
-//                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 18, 0), Timetable.NO_PREREQUISITE);
-//            act2.addPeriod(DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 10, 0),
-//                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 18, 0));
+//                    Helper.getDate(Helper.SUNDAY_WEEKDAY, 10, 0),
+//                    Helper.getDate(Helper.SUNDAY_WEEKDAY, 18, 0), Timetable.NO_PREREQUISITE);
+//            act2.addPeriod(Helper.getDate(Helper.MONDAY_WEEKDAY, 10, 0),
+//                    Helper.getDate(Helper.MONDAY_WEEKDAY, 18, 0));
 //
 //            Activity act3 = new Activity("Buy a gift for wedding", 8,
 //                    1, 0,
-//                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 10, 0),
-//                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 18, 0), Timetable.NO_PREREQUISITE);
-//            act3.addPeriod(DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 10, 0),
-//                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 18, 0));
+//                    Helper.getDate(Helper.SUNDAY_WEEKDAY, 10, 0),
+//                    Helper.getDate(Helper.SUNDAY_WEEKDAY, 18, 0), Timetable.NO_PREREQUISITE);
+//            act3.addPeriod(Helper.getDate(Helper.MONDAY_WEEKDAY, 10, 0),
+//                    Helper.getDate(Helper.MONDAY_WEEKDAY, 18, 0));
 //
 //            Activity act4 = new Activity("Attend the wedding banquet", 100,
 //                    3, 0,
-//                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 18, 0),
-//                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 21, 0), 2);
+//                    Helper.getDate(Helper.MONDAY_WEEKDAY, 18, 0),
+//                    Helper.getDate(Helper.MONDAY_WEEKDAY, 21, 0), 2);
 //            act4.addPrerequisite(3);
 //
 //            Activity act5 = new Activity("Eat all day", 80,
 //                    1, 0,
-//                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 10, 0),
-//                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 13, 0), Timetable.NO_PREREQUISITE);
-//            act5.addPeriod(DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 14, 0),
-//                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 20, 0));
+//                    Helper.getDate(Helper.MONDAY_WEEKDAY, 10, 0),
+//                    Helper.getDate(Helper.MONDAY_WEEKDAY, 13, 0), Timetable.NO_PREREQUISITE);
+//            act5.addPeriod(Helper.getDate(Helper.MONDAY_WEEKDAY, 14, 0),
+//                    Helper.getDate(Helper.MONDAY_WEEKDAY, 20, 0));
 //
 //            mTimetable.addActivity(act1);
 //            mTimetable.addActivity(act2);
@@ -88,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
 //            mTimetable.addActivity(act4);
 //            mTimetable.addActivity(act5);
 //-----------------------------------Hard coded data for testing-------------------------------------
-
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -104,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
         Log.d("Numbers of activities", String.valueOf(mTimetable.getUnsortedActivities().size()));
-
     }
 
     @Override
@@ -115,24 +122,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateFragment() {
         // get set activities from timetable
-        ArrayList<Activity> allActivities = mTimetable.getSetActivities();
+        finalState = mTimetable.getSetActivities();
 
-        // remove activities that don't have a final period
-        for (Iterator<Activity> iterator = allActivities.iterator();
-             iterator.hasNext(); ) {
-            Activity activity = iterator.next();
-            if (activity.getFinalPeriod() == null) {
-                iterator.remove();
-            }
-        }
+//        // remove activities that don't have a final period
+//        for (Iterator<Activity> iterator = allActivities.iterator();
+//             iterator.hasNext(); ) {
+//            Activity activity = iterator.next();
+//            if (activity.getFinalPeriod() == null) {
+//                iterator.remove();
+//            }
+//        }
 
         // sort the remaining activities by time
-        Collections.sort(allActivities, new Comparator<Activity>() {
+        Collections.sort(finalState, new Comparator<Activity>() {
             @Override
             public int compare(Activity o1, Activity o2) {
                 return o1.getFinalPeriod().getStart().compareTo(o2.getFinalPeriod().getStart());
             }
         });
+
 
         // list to store all activities
         ArrayList<ArrayList<Activity>> weekdayActivities = new ArrayList<>();
@@ -145,27 +153,27 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // distribute activities by its weekday
-        for (Activity activity : allActivities) {
+        for (Activity activity : finalState) {
             switch (activity.getFinalPeriod().getStart().getDayOfWeek()) {
-                case DateHelper.SUNDAY_WEEKDAY:
+                case Helper.SUNDAY_WEEKDAY:
                     weekdayActivities.get(0).add(activity);
                     break;
-                case DateHelper.MONDAY_WEEKDAY:
+                case Helper.MONDAY_WEEKDAY:
                     weekdayActivities.get(1).add(activity);
                     break;
-                case DateHelper.TUESDAY_WEEKDAY:
+                case Helper.TUESDAY_WEEKDAY:
                     weekdayActivities.get(2).add(activity);
                     break;
-                case DateHelper.WEDNESDAY_WEEKDAY:
+                case Helper.WEDNESDAY_WEEKDAY:
                     weekdayActivities.get(3).add(activity);
                     break;
-                case DateHelper.THURSDAY_WEEKDAY:
+                case Helper.THURSDAY_WEEKDAY:
                     weekdayActivities.get(4).add(activity);
                     break;
-                case DateHelper.FRIDAY_WEEKDAY:
+                case Helper.FRIDAY_WEEKDAY:
                     weekdayActivities.get(5).add(activity);
                     break;
-                case DateHelper.SATURDAY_WEEKDAY:
+                case Helper.SATURDAY_WEEKDAY:
                     weekdayActivities.get(6).add(activity);
                     break;
             }
@@ -188,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
                 // add that weekday fragment to the adapter
                 adapter.add(fragment);
 
-            } else { // if there is no activity for that day
+            } else { // if there is for that day
                 // add the old empty fragment to the adapter
                 adapter.add(new DefaultFragment());
             }
@@ -277,7 +285,6 @@ public class MainActivity extends AppCompatActivity {
                     + " activities out of " + String.valueOf(totalActivities)
                     + " activities", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     @Override
@@ -301,7 +308,6 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.import_activities:
 //                Toast.makeText(this, "Import activities btn clicked", Toast.LENGTH_SHORT).show();
-                // TODO: add functionality to import btn
                 Intent importIntent = new Intent(Intent.ACTION_GET_CONTENT);
                 importIntent.setType("text/plain");
                 startActivityForResult(importIntent, PICKFILE_REQUEST_CODE);
@@ -309,11 +315,18 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.export_timetable:
 //                Toast.makeText(this, "Export timetable btn clicked", Toast.LENGTH_SHORT).show();
-                // TODO: add functionality to export btn
+                if (finalState.size() == 0) {
+                    Toast.makeText(this, "The timetable don't have any activity!", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                if (usingAndroidMOrAbove()) {
+                    ActivityCompat.requestPermissions(this
+                            , new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                } else {
+                    exportTimetableToTextFile(getTimetableStringForExport());
+                }
                 return true;
         }
-
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -326,12 +339,11 @@ public class MainActivity extends AppCompatActivity {
 
                     try {
                         String activitiesString = getStringFromUri(uri);
-                        importTimetable(activitiesString);
+                        importActivitiesFromString(activitiesString);
 
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
                 }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -366,7 +378,7 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
-    private void importTimetable(String text) {
+    private void importActivitiesFromString(String text) {
         text = text.replace("\n", "");
         int total = Integer.parseInt(text.substring(0, 1));
 
@@ -385,7 +397,7 @@ public class MainActivity extends AppCompatActivity {
 
             text = text.substring(text.indexOf(":") + 1);
             String durationMinutesText = text.substring(0, 2);
-            int durationMinutes = DateHelper.getMinuteByMinuteString(durationMinutesText);
+            int durationMinutes = Helper.getMinuteByMinuteString(durationMinutesText);
 
             text = text.substring(2 + 1);
             int totalPeriodsUpperIndexLimit = 3;
@@ -402,16 +414,16 @@ public class MainActivity extends AppCompatActivity {
 
             for (int j = 1; j <= totalPeriods; j++) {
                 String weekdayText = text.substring(0, 3);
-                int weekday = DateHelper.getWeekdayByWeekdayName(weekdayText);
+                int weekday = Helper.getWeekdayByWeekdayName(weekdayText);
 
                 String startTimeText = text.substring(4, 9);
-                int[] startTime = DateHelper.getHourMinuteByTimeString(startTimeText);
+                int[] startTime = Helper.getHourMinuteByTimeString(startTimeText);
 
                 String endTimeText = text.substring(10, 15);
-                int[] endTime = DateHelper.getHourMinuteByTimeString(endTimeText);
+                int[] endTime = Helper.getHourMinuteByTimeString(endTimeText);
 
-                periods.add(new Interval(DateHelper.getDate(weekday, startTime[0], startTime[1])
-                        , DateHelper.getDate(weekday, endTime[0], endTime[1])));
+                periods.add(new Interval(Helper.getDate(weekday, startTime[0], startTime[1])
+                        , Helper.getDate(weekday, endTime[0], endTime[1])));
 
                 if (j != totalPeriods) {
                     text = text.substring(text.indexOf(",") + 1);
@@ -442,5 +454,74 @@ public class MainActivity extends AppCompatActivity {
 
         }
         updateFragment();
+    }
+
+    private String getTimetableStringForExport() {
+
+
+        int total = finalState.size();
+//        for (Activity activity : finalState) {
+//            Log.i("exporting", mTimetable.activityFormatter(activity));
+//        }
+//        Log.i("size", String.valueOf(total));
+        String export = String.valueOf(total) + "\n";
+        for (int i = 0; i < total; i++) {
+            Activity activity = finalState.get(i);
+            export += activity.getActivityNumber()
+                    + " "
+                    + Helper.getWeekDayNameByWeekday(activity.getFinalPeriod().getStart().getDayOfWeek())
+                    + " "
+                    + activity.getFinalPeriod().getStart().toString(Helper.dateTimeFormatter)
+                    + "\n";
+        }
+        return export;
+    }
+
+    private boolean usingAndroidMOrAbove() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    }
+
+    private void exportTimetableToTextFile(String timetable) {
+        if (isExternalStorageWritable()) {
+            Log.i("export", "Clear to write to external fs");
+            String fileName = "timetable_export_" + DateTime.now().toString(Helper.exportFileNameDateTimeFormatter) + ".txt";
+            Log.i("filename", fileName);
+            Log.i("exporting string", timetable);
+            File root = Environment.getExternalStorageDirectory();
+            Log.i("root dir", root.getPath());
+            File file = new File(root, fileName);
+            try {
+                file.createNewFile();
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
+                outputStreamWriter.append(timetable);
+                outputStreamWriter.close();
+                fileOutputStream.flush();
+
+                fileOutputStream.close();
+            } catch (IOException e) {
+                Log.e("Exception", "Export failed" + e.toString());
+            }
+            Toast.makeText(this, "Timetable saved as\n" + root.toString() + File.separator + fileName,
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    exportTimetableToTextFile(getTimetableStringForExport());
+
+                } else {
+                    Toast.makeText(this, "Unable to get permission to write!", Toast.LENGTH_SHORT).show();
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+            }
+        }
     }
 }

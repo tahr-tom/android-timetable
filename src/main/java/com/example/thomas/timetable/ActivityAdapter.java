@@ -25,10 +25,10 @@ class ActivityAdapter extends ArrayAdapter<Activity> {
 
         TextView startTimeTextView = (TextView) listItemView.findViewById(R.id.item_start);
         assert currentActivity != null;
-        startTimeTextView.setText(currentActivity.getFinalPeriod().getStart().toString(DateHelper.dateTimeFormatter));
+        startTimeTextView.setText(currentActivity.getFinalPeriod().getStart().toString(Helper.dateTimeFormatter));
 
         TextView endTimeTextView = (TextView) listItemView.findViewById(R.id.item_end);
-        endTimeTextView.setText(currentActivity.getFinalPeriod().getEnd().toString(DateHelper.dateTimeFormatter));
+        endTimeTextView.setText(currentActivity.getFinalPeriod().getEnd().toString(Helper.dateTimeFormatter));
 
         TextView title = (TextView) listItemView.findViewById(R.id.item_title);
         title.setText(currentActivity.getActivityTitle());
