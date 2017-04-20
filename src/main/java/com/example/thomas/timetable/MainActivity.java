@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import android.support.design.widget.TabLayout;
 import android.widget.Toast;
 
+import org.joda.time.Interval;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,51 +42,51 @@ public class MainActivity extends AppCompatActivity {
 
             mTimetable = getIntent().getParcelableExtra("timetable");
 
-        } else {
-            //-----------------------------------Hard coded data for testing-------------------------------------
-            Activity act1 = new Activity("Borrow a travel book from library", 5,
-                    1, 0,
-                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 10, 0),
-                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 13, 0), Timetable.NO_PREREQUISITE);
-            act1.addPeriod(DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 14, 0),
-                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 20, 0));
-            act1.addPeriod(DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 10, 0),
-                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 13, 0));
-            act1.addPeriod(DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 14, 0),
-                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 20, 0));
-
-            Activity act2 = new Activity("Haircut for wedding", 2,
-                    2, 0,
-                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 10, 0),
-                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 18, 0), Timetable.NO_PREREQUISITE);
-            act2.addPeriod(DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 10, 0),
-                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 18, 0));
-
-            Activity act3 = new Activity("Buy a gift for wedding", 8,
-                    1, 0,
-                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 10, 0),
-                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 18, 0), Timetable.NO_PREREQUISITE);
-            act3.addPeriod(DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 10, 0),
-                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 18, 0));
-
-            Activity act4 = new Activity("Attend the wedding banquet", 100,
-                    3, 0,
-                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 18, 0),
-                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 21, 0), 2);
-            act4.addPrerequisite(3);
-
-            Activity act5 = new Activity("Eat all day", 80,
-                    1, 0,
-                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 10, 0),
-                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 13, 0), Timetable.NO_PREREQUISITE);
-            act5.addPeriod(DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 14, 0),
-                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 20, 0));
-
-            mTimetable.addActivity(act1);
-            mTimetable.addActivity(act2);
-            mTimetable.addActivity(act3);
-            mTimetable.addActivity(act4);
-            mTimetable.addActivity(act5);
+//        } else {
+//            //-----------------------------------Hard coded data for testing-------------------------------------
+//            Activity act1 = new Activity("Borrow a travel book from library", 5,
+//                    1, 0,
+//                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 10, 0),
+//                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 13, 0), Timetable.NO_PREREQUISITE);
+//            act1.addPeriod(DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 14, 0),
+//                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 20, 0));
+//            act1.addPeriod(DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 10, 0),
+//                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 13, 0));
+//            act1.addPeriod(DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 14, 0),
+//                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 20, 0));
+//
+//            Activity act2 = new Activity("Haircut for wedding", 2,
+//                    2, 0,
+//                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 10, 0),
+//                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 18, 0), Timetable.NO_PREREQUISITE);
+//            act2.addPeriod(DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 10, 0),
+//                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 18, 0));
+//
+//            Activity act3 = new Activity("Buy a gift for wedding", 8,
+//                    1, 0,
+//                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 10, 0),
+//                    DateHelper.getDate(DateHelper.SUNDAY_WEEKDAY, 18, 0), Timetable.NO_PREREQUISITE);
+//            act3.addPeriod(DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 10, 0),
+//                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 18, 0));
+//
+//            Activity act4 = new Activity("Attend the wedding banquet", 100,
+//                    3, 0,
+//                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 18, 0),
+//                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 21, 0), 2);
+//            act4.addPrerequisite(3);
+//
+//            Activity act5 = new Activity("Eat all day", 80,
+//                    1, 0,
+//                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 10, 0),
+//                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 13, 0), Timetable.NO_PREREQUISITE);
+//            act5.addPeriod(DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 14, 0),
+//                    DateHelper.getDate(DateHelper.MONDAY_WEEKDAY, 20, 0));
+//
+//            mTimetable.addActivity(act1);
+//            mTimetable.addActivity(act2);
+//            mTimetable.addActivity(act3);
+//            mTimetable.addActivity(act4);
+//            mTimetable.addActivity(act5);
 //-----------------------------------Hard coded data for testing-------------------------------------
 
         }
@@ -348,34 +350,97 @@ public class MainActivity extends AppCompatActivity {
 
     // >= Android 4.4 (Kitkat)
     private String getStringFromUri(Uri uri) throws IOException {
-        InputStream inputStream = getContentResolver().openInputStream(uri);
-        assert inputStream != null;
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        StringBuilder stringBuilder = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            stringBuilder.append(line).append('\n');
+        if (isExternalStorageReadable()) {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            assert inputStream != null;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line).append('\n');
+            }
+            inputStream.close();
+            Log.i("getStringFromUri_Result", String.valueOf(stringBuilder.toString()));
+            return stringBuilder.toString();
         }
-        inputStream.close();
-        Log.i("getStringFromUri_Result", String.valueOf(stringBuilder.toString()));
-        return stringBuilder.toString();
+        return null;
     }
 
-    private void importTimetable(String activitiesString) {
-        activitiesString = activitiesString.replace("\n", "").trim();
-        int numberOfActivities = Integer.parseInt(activitiesString.trim().substring(0, 1));
-        Log.i("number of activities", String.valueOf(numberOfActivities));
-        for(int i = 0; i <= numberOfActivities; i++) {
-            activitiesString = activitiesString.substring(activitiesString.indexOf(",") + 1);
-            String title = activitiesString.substring(0, activitiesString.indexOf(","));
-            activitiesString = activitiesString.substring(activitiesString.indexOf(",") + 1);
-            int priority = Integer.parseInt(activitiesString.substring(0, 1));
-            activitiesString = activitiesString.substring(2);
+    private void importTimetable(String text) {
+        text = text.replace("\n", "");
+        int total = Integer.parseInt(text.substring(0, 1));
+
+        text = text.substring(3);
+        for (int i = 1; i <= total; i++) {
+            ArrayList<Interval> periods = new ArrayList<>();
+            ArrayList<Integer> prerequisites = new ArrayList<>();
+
+            String title = text.substring(0, text.indexOf(","));
+
+            text = text.substring(text.indexOf(",") + 1);
+            int priority = Integer.parseInt(text.substring(0, text.indexOf(",")));
+
+            text = text.substring(text.indexOf(",") + 1);
+            int durationHours = Integer.parseInt(text.substring(0, text.indexOf(":")));
+
+            text = text.substring(text.indexOf(":") + 1);
+            String durationMinutesText = text.substring(0, 2);
+            int durationMinutes = DateHelper.getMinuteByMinuteString(durationMinutesText);
+
+            text = text.substring(2 + 1);
+            int totalPeriodsUpperIndexLimit = 3;
+            String totalPeriodsText = text.substring(0, totalPeriodsUpperIndexLimit);
+            while (totalPeriodsText.contains(" ")) {
+                totalPeriodsUpperIndexLimit--;
+                totalPeriodsText = text.substring(0, totalPeriodsUpperIndexLimit);
+            }
+            int totalPeriods = Integer.parseInt(totalPeriodsText);
+
+            int totalPrerequisites = Integer.parseInt(text.substring(totalPeriodsUpperIndexLimit + 1, totalPeriodsUpperIndexLimit + 2));
+
+            text = text.substring(totalPeriodsUpperIndexLimit + 2);
+
+            for (int j = 1; j <= totalPeriods; j++) {
+                String weekdayText = text.substring(0, 3);
+                int weekday = DateHelper.getWeekdayByWeekdayName(weekdayText);
+
+                String startTimeText = text.substring(4, 9);
+                int[] startTime = DateHelper.getHourMinuteByTimeString(startTimeText);
+
+                String endTimeText = text.substring(10, 15);
+                int[] endTime = DateHelper.getHourMinuteByTimeString(endTimeText);
+
+                periods.add(new Interval(DateHelper.getDate(weekday, startTime[0], startTime[1])
+                        , DateHelper.getDate(weekday, endTime[0], endTime[1])));
+
+                if (j != totalPeriods) {
+                    text = text.substring(text.indexOf(",") + 1);
+                } else if (totalPrerequisites != 0) {
+                    text = text.substring(15);
+                    String allPrerequisites;
+                    if (i == total) {
+                        allPrerequisites = text.replace(",", "");
+                    } else {
+                        allPrerequisites = text.substring(0, text.indexOf(",", totalPrerequisites) - 1)
+                                .replace(",", "");
+                        text = text.substring(text.indexOf(",", totalPrerequisites) + 1);
+                    }
+
+                    for (int k = 1; k <= totalPrerequisites; k++) {
+                        prerequisites.add(Integer.valueOf(allPrerequisites.substring(k - 1, k)));
+                    }
+
+                } else {
+                    text = text.substring(text.indexOf(",") + 1);
+                }
 
 
+            }
+
+            Activity activity = new Activity(title, priority, durationHours, durationMinutes, periods, prerequisites);
+            mTimetable.addActivity(activity);
 
         }
+        updateFragment();
     }
-
-
 }

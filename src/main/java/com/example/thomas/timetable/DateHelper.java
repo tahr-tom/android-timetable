@@ -29,6 +29,14 @@ class DateHelper {
 
     }
 
+    static int getMinuteByMinuteString(String minute) {
+        if (Integer.parseInt(minute.substring(0, 1)) == 0) {
+            return Integer.parseInt(minute.substring(1, 2));
+        } else {
+            return Integer.parseInt(minute.substring(0, 2));
+        }
+    }
+
     static int[] getHourMinuteByTimeString(String time) {
         time = time.trim().replace(":", "").replace(" ", "");
         int hour;
