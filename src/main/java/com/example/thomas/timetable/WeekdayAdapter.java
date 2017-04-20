@@ -8,12 +8,12 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.ArrayList;
 
 
-public class WeekdayAdapter extends FragmentPagerAdapter {
+class WeekdayAdapter extends FragmentPagerAdapter {
     private Context mContext;
 
     private ArrayList<Fragment> mFragments = new ArrayList<>();
 
-    public WeekdayAdapter(Context context, FragmentManager fm) {
+    WeekdayAdapter(Context context, FragmentManager fm) {
         super(fm);
         mContext = context;
 

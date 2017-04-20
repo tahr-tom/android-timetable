@@ -1,7 +1,5 @@
 package com.example.thomas.timetable;
 
-import android.util.Log;
-
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
@@ -55,7 +53,6 @@ class Helper {
 
     static int getWeekdayByWeekdayName(String weekday) {
         String weekdayName = weekday.substring(0, 3).toLowerCase();
-        Log.i("getweekdaybyweekdayneam", weekdayName);
         switch (weekdayName) {
             case "mon":
                 return MONDAY_WEEKDAY;
