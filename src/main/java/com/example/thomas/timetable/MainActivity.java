@@ -277,8 +277,18 @@ public class MainActivity extends AppCompatActivity {
         // get the total number of activities that user has input
         int totalActivities = mTimetable.getUnsortedActivities().size();
 
+        // move viewpager position to the page that has activities
+        int pagePosition = 0;
+        for (int i = 0; i <= 6; i++) {
+            if (!weekdayActivities.get(i).isEmpty()) { // if that weekday has activities
+                pagePosition = i; // set position that that day
+                break; // escape to make sure it is the first page that has activities
+            }
+        }
+        viewPager.setCurrentItem(pagePosition);
 
-        if (setActivities == totalActivities) { // if all activities has been scheduled
+
+        if (setActivities == totalActivities) { // if all activities have been scheduled
             Toast.makeText(this, "Scheduled all activities", Toast.LENGTH_SHORT).show();
         } else { // if only some activities has been scheduled
             Toast.makeText(this, "Schedule " + String.valueOf(setActivities)
