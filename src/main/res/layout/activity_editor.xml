@@ -41,7 +41,7 @@
             android:layout_margin="16dp"
             android:hint="Activity Title"
             android:id="@+id/activity_title"
-            android:inputType="textCapWords"
+            android:inputType="textCapSentences"
             android:maxLines="3"/>
 
         <LinearLayout
